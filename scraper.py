@@ -12,10 +12,29 @@ URL = os.getenv("LOUNAS_SOURCE_URL", "https://lounaat.info/kauppakeskus-sello-es
 
 
 
+import json
+from datetime import date
+
+CACHE_FILE = ".lounas_cache.json"
+
 def fetch_sello_lunch_menus() -> List[Dict[str, Any]]:
     """
     Fetches the Sello shopping mall lunch menus for today.
+    Uses a daily file-based cache to avoid overloading the source website.
     """
+    today_str = date.today().isoformat()
+    
+    # Try reading from cache
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+                if cached_data.get("date") == today_str:
+                    return cached_data.get("data", [])
+        except Exception:
+            # Fallback to fresh scrape if reading cache fails
+            pass
+            
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     }
@@ -29,6 +48,7 @@ def fetch_sello_lunch_menus() -> List[Dict[str, Any]]:
     menu_containers = soup.select(".menu.item")
     
     restaurants_data = []
+
     
     for container in menu_containers:
         # Extract restaurant name
@@ -95,8 +115,17 @@ def fetch_sello_lunch_menus() -> List[Dict[str, Any]]:
             "address": address,
             "menu": dishes
         })
+    
+    # Save to cache for subsequent requests today
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump({"date": today_str, "data": restaurants_data}, f, ensure_ascii=False, indent=2)
+    except Exception:
+        # Ignore cache write errors
+        pass
         
     return restaurants_data
+
 
 if __name__ == "__main__":
     import json

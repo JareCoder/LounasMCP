@@ -1,5 +1,7 @@
 # Environment variables
 .env
+.lounas_cache.json
+
 
 # Python caching
 __pycache__/
