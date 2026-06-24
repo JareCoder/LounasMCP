@@ -1,0 +1,16 @@
+# Environment variables
+.env
+
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+# Build and package outputs
+build/
+dist/
+*.egg-info/
