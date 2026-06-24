@@ -73,9 +73,12 @@ def main():
         print(f"Starting LounasMCP SSE server on {args.host}:{args.port}")
         mcp.settings.host = args.host
         mcp.settings.port = args.port
+        # Disable DNS rebinding protection for SSE (essential for containerized/remote clients like LiteLLM)
+        mcp.settings.transport_security.enable_dns_rebinding_protection = False
         mcp.run(transport="sse")
     else:
         mcp.run(transport="stdio")
+
 
 
 if __name__ == "__main__":
