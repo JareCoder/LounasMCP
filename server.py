@@ -71,9 +71,12 @@ def main():
 
     if args.transport == "sse":
         print(f"Starting LounasMCP SSE server on {args.host}:{args.port}")
-        mcp.run(transport="sse", host=args.host, port=args.port)
+        mcp.settings.host = args.host
+        mcp.settings.port = args.port
+        mcp.run(transport="sse")
     else:
         mcp.run(transport="stdio")
+
 
 if __name__ == "__main__":
     main()
