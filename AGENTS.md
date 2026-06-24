@@ -4,18 +4,21 @@ This document is written for AI Agents (like Claude, Cursor, Antigravity, or oth
 
 ## Server Metadata
 - **Name**: `LounasMCP`
-- **Domain**: Scraping and retrieving lunch menus for Espoo's Kauppakeskus Sello area.
-- **Source Website**: `https://lounaat.info/kauppakeskus-sello-espoo`
+- **Domain**: Scraping and retrieving lunch menus for a configured location in Finland.
+- **Configuration**: The target website is configurable via the `LOUNAS_SOURCE_URL` environment variable. Agents should read the returned addresses to confirm the current active city/location.
+
+## Cache Strategy
+- The server uses a daily file-based cache (`.lounas_cache.json`). The responses are resolved locally in `<5ms` once cached for that calendar day, avoiding redundant scraping network overhead.
 
 ## Exposed Tools
 
 ### `get_sello_lunch_menus`
 
 #### Description
-Retrieves today's lunch menus for all restaurants located in and around Kauppakeskus Sello, Espoo, Finland.
+Retrieves today's lunch menus for all restaurants located in and around the configured location.
 
 #### Parameters
-*None* (Retrieves today's menus by default).
+*None* (Retrieves today's menus for the active location by default).
 
 #### Expected Return Format
 The tool returns a formatted Markdown string. Example structure:
